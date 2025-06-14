@@ -1,7 +1,11 @@
 # Create an S3 bucket
 resource "aws_s3_bucket" "cbzbitbucket" {
   bucket = var.bucket_name
-
+  tags = {
+    Name        = "StaticWebsiteBucket"
+    Environment = var.environment
+  }
+}
   # Enable static website hosting
 resource "aws_s3_bucket_website_configuration" "cbzbitbucket_website" {
   bucket = aws_s3_bucket.cbzbitbucket.id
@@ -13,15 +17,9 @@ resource "aws_s3_bucket_website_configuration" "cbzbitbucket_website" {
   error_document {
     key = "error.html"
   }
-
-  tags = {
-    Name        = "StaticWebsiteBucket"
-    Environment = var.environment
-  }
-}
 }
 
-# Disable Block Public Access
+ # Disable Block Public Access
 resource "aws_s3_bucket_public_access_block" "example" {
   bucket = aws_s3_bucket.cbzbitbucket.bucket
 
