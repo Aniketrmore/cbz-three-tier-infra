@@ -3,15 +3,22 @@ resource "aws_s3_bucket" "cbzbitbucket" {
   bucket = var.bucket_name
 
   # Enable static website hosting
-  website {
-    index_document = "index.html"
-    error_document = "error.html"
+resource "aws_s3_bucket_website_configuration" "cbzbitbucket_website" {
+  bucket = aws_s3_bucket.cbzbitbucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
   }
 
   tags = {
     Name        = "StaticWebsiteBucket"
     Environment = var.environment
   }
+}
 }
 
 # Disable Block Public Access
@@ -44,6 +51,6 @@ resource "aws_s3_bucket_policy" "static_website_policy" {
 
 # Output the bucket's website endpoint
 output "website_endpoint" {
-  value       = aws_s3_bucket.cbzbitbucket.website_endpoint
-  description = "The URL to access the static website"
+  value       = aws_s3_bucket_website_configuration.cbzbitbucket_website.website_endpoint
+  description = "Static website hosting endpoint"
 }
